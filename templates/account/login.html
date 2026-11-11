@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Iniciar sesión · Aprendo a mi Ritmo{% endblock %}
+{% block main %}
+    <h1>Iniciar sesión</h1>
+    <form method="post" action="{% url 'account_login' %}">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            <div>{{ field.as_field_group }}</div>
+        {% endfor %}
+        {{ redirect_field }}
+        <button type="submit">Iniciar sesión</button>
+    </form>
+    <p><a href="{% url 'account_reset_password' %}">¿Olvidaste tu contraseña?</a></p>
+{% endblock %}

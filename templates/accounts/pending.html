@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}Acceso pendiente · Aprendo a mi Ritmo{% endblock %}
+
+{% block main %}
+    <h1>Tu cuenta está pendiente de autorización</h1>
+    <p>Has iniciado sesión como {{ user.email }}.</p>
+    <p>Solicita a un administrador que te asigne un rol para habilitar tu acceso.</p>
+    <p><a href="{% url 'accounts:entry' %}">Comprobar mi acceso</a></p>
+{% endblock %}

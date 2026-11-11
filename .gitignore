@@ -1,0 +1,18 @@
+# Entorno local y credenciales
+.venv/
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+.coverage
+htmlcov/
+.pytest_cache/
+staticfiles/
+media/
+*.log
+
+# Material académico y diagramas
+.archify/
+*.docx
+~$*

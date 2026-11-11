@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Invitación no disponible · Aprendo a mi Ritmo{% endblock %}
+
+{% block main %}
+    <h1>Invitación no disponible</h1>
+    <p>El enlace es inválido, venció o ya fue utilizado.</p>
+    <p>Solicita una nueva invitación a tu docente o administrador.</p>
+    <p>Si ya creaste tu cuenta, puedes iniciar sesión o recuperar tu contraseña.</p>
+    <p><a href="{% url 'account_login' %}">Iniciar sesión</a></p>
+    <p><a href="{% url 'account_reset_password' %}">Recuperar mi contraseña</a></p>
+{% endblock %}

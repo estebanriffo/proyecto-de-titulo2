@@ -1,0 +1,9 @@
+Has recibido una invitación para crear tu cuenta en Aprendo a mi Ritmo.
+
+Abre el siguiente enlace para establecer tu contraseña:
+{{ invitation_url }}
+
+El enlace vence 48 horas después de su envío y permite completar el registro una sola vez.
+Si recibes una nueva invitación, utiliza el enlace del mensaje más reciente.
+
+Después de crear tu cuenta, un administrador debe asignarte un rol para habilitar tu acceso.

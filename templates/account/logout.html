@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Cerrar sesión · Aprendo a mi Ritmo{% endblock %}
+{% block main %}
+    <h1>Cerrar sesión</h1>
+    <p>Confirma que deseas cerrar tu sesión.</p>
+    <form method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        {{ redirect_field }}
+        <button type="submit">Cerrar sesión</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Acceso habilitado · Aprendo a mi Ritmo{% endblock %}
+
+{% block main %}
+    <h1>Tu acceso está habilitado</h1>
+    <p>Has iniciado sesión como {{ user.email }}.</p>
+    {% if roles %}
+        <h2>Tus roles</h2>
+        <ul>
+            {% for role in roles %}<li>{{ role|capfirst }}</li>{% endfor %}
+        </ul>
+    {% endif %}
+    {% if can_invite %}
+        <p><a href="{% url 'accounts:invitations' %}">Enviar invitaciones</a></p>
+    {% endif %}
+    {% if can_manage_accounts %}
+        <p><a href="{% url 'admin:accounts_user_changelist' %}">Gestionar cuentas y asignar roles</a></p>
+    {% endif %}
+{% endblock %}

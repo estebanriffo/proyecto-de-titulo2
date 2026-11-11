@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Invitar a una persona · Aprendo a mi Ritmo{% endblock %}
+
+{% block main %}
+    <h1>Invitar a una persona</h1>
+    <p>Ingresa su correo electrónico para enviarle un enlace de registro con vigencia de 48 horas.</p>
+    <p>Al reenviar una invitación, el enlace anterior deja de ser válido.</p>
+    {% if email_to_console %}
+        <p>En este entorno de desarrollo, el correo y su enlace aparecen en la consola del servidor.</p>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.email.as_field_group }}
+        <button type="submit">Enviar o reenviar invitación</button>
+    </form>
+    <p><a href="{% url 'accounts:authorized' %}">Volver a mi acceso</a></p>
+{% endblock %}

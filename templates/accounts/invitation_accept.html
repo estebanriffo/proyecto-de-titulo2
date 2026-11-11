@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Crear mi cuenta · Aprendo a mi Ritmo{% endblock %}
+
+{% block main %}
+    <h1>Crear mi cuenta</h1>
+    <p>Esta invitación corresponde al correo <strong>{{ invitation.email }}</strong>.</p>
+    <p>Elige una contraseña para completar tu registro.</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.new_password1.as_field_group }}
+        {{ form.new_password2.as_field_group }}
+        <button type="submit">Crear mi cuenta</button>
+    </form>
+    <p>Después de registrarte, un administrador debe asignarte un rol para habilitar tu acceso.</p>
+{% endblock %}
