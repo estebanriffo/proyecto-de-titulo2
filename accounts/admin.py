@@ -1,12 +1,24 @@
+from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import Group
 
-from .access import ROLE_NAMES, can_manage_accounts
+from .access import ROLE_NAMES, can_manage_accounts, get_educational_roles
 from .models import User
+
+
+class UserRolesForm(forms.ModelForm):
+    def clean_groups(self):
+        groups = self.cleaned_data["groups"]
+        if len(get_educational_roles(group.name for group in groups)) > 1:
+            raise forms.ValidationError("Selecciona solo uno de los roles: estudiante o docente.")
+        return groups
 
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
+    # Django Admin actualiza la fila del usuario antes de guardar sus grupos
+    # dentro de la misma transacción, lo que serializa las ediciones en PostgreSQL.
+    form = UserRolesForm
     list_display = ("email", "is_active")
     list_filter = ("is_active", "groups")
     search_fields = ("email",)

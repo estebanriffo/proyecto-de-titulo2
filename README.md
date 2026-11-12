@@ -70,8 +70,8 @@ La contraseña se usa para las cuentas ficticias nuevas de la siguiente tabla.
 
 | Correo ficticio | Grupo | Destino al iniciar sesión |
 | --- | --- | --- |
-| `estudiante@aprendo.example` | estudiante | Pantalla de acceso habilitado |
-| `docente@aprendo.example` | docente | Pantalla de acceso habilitado |
+| `estudiante@aprendo.example` | estudiante | Inicio con «Actividades» y «Mi progreso» bajo «Próximamente» |
+| `docente@aprendo.example` | docente | Inicio con «Enviar invitaciones» y módulos docentes bajo «Próximamente» |
 | `administrador@aprendo.example` | administrador | Acceso habilitado y enlace a gestión de cuentas |
 | `pendiente@aprendo.example` | Sin grupo | Pantalla de espera |
 
@@ -81,8 +81,10 @@ requiere `DEBUG=True`.
 
 Cerrar la sesión del superusuario antes de probar cada cuenta en
 `http://localhost:8000/accounts/login/`. El superusuario llega a Django Admin.
-Las pantallas por rol son las pantallas mínimas de la SPEC 01. Las actividades,
-el seguimiento y el asistente de IA corresponden a funcionalidades posteriores.
+En el inicio de estudiante, «Actividades» y «Mi progreso» aparecen como texto.
+Abrir `/accounts/invitations/` directamente con esa cuenta devuelve HTTP 403.
+Con la cuenta docente, «Enviar invitaciones» abre el formulario y «Gestionar
+actividades» y «Revisar progreso de estudiantes» aparecen bajo «Próximamente».
 
 ### Asignar y retirar roles
 
@@ -93,7 +95,9 @@ y modificación de usuarios al aplicar las migraciones.
 
 La gestión permite cambiar grupos y habilitación, con el correo como identidad
 de solo lectura. Los tres grupos disponibles son `estudiante`, `docente` y
-`administrador`, y se pueden combinar. Al aceptar una invitación se crea una cuenta
+`administrador`. Seleccionar un solo rol educativo por cuenta. Si una cuenta ya
+tiene ambos, su inicio pide contactar a un administrador para corregir la
+asignación. Al aceptar una invitación se crea una cuenta
 activa, con su correo verificado y sin grupos. Después un administrador le asigna
 los roles correspondientes.
 

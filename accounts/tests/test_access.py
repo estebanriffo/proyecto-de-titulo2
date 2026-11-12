@@ -1,7 +1,11 @@
+from concurrent.futures import ThreadPoolExecutor
+from threading import Barrier
+
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import Group, Permission
 from django.core.cache import cache
-from django.test import TestCase, override_settings
+from django.db import connections
+from django.test import Client, TestCase, TransactionTestCase, override_settings
 from django.urls import reverse
 
 from accounts.access import ROLE_NAMES
@@ -56,6 +60,10 @@ class AccessTests(TestCase):
         )
 
     def test_cada_rol_accede_a_la_pantalla_autorizada(self):
+        options = {
+            "estudiante": ("<li>Actividades</li>", "<li>Mi progreso</li>"),
+            "docente": ("<li>Gestionar actividades</li>", "<li>Revisar progreso de estudiantes</li>"),
+        }
         for role in ROLE_NAMES:
             with self.subTest(role=role):
                 self.assign(role)
@@ -63,14 +71,19 @@ class AccessTests(TestCase):
                 response = self.client.get(reverse("accounts:authorized"))
                 self.assertContains(response, role.capitalize())
                 self.assertEqual(response.context["can_manage_accounts"], role == "administrador")
+                for profile, items in options.items():
+                    for item in items:
+                        assertion = self.assertContains if role == profile else self.assertNotContains
+                        assertion(response, item, html=True)
+                self.assertEqual("Próximamente" in response.content.decode(), role in options)
                 self.client.logout()
 
     def test_asignar_y_retirar_grupos_aplica_en_la_siguiente_solicitud(self):
         self.login()
-        self.assign("estudiante", "docente")
+        self.assign("docente")
         response = self.client.get(reverse("accounts:authorized"))
-        self.assertContains(response, "Estudiante")
         self.assertContains(response, "Docente")
+        self.assertContains(response, "Enviar invitaciones")
         self.assertRedirects(
             self.client.get(reverse("accounts:pending")), reverse("accounts:authorized")
         )
@@ -79,6 +92,37 @@ class AccessTests(TestCase):
             self.client.get(reverse("accounts:authorized")), reverse("accounts:pending")
         )
         self.assertContains(self.client.get(reverse("accounts:pending")), "pendiente")
+
+    def test_inicio_bloquea_funciones_educativas_con_roles_incompatibles(self):
+        self.assign("estudiante", "docente")
+        self.login()
+        response = self.client.get(reverse("accounts:authorized"))
+        self.assertContains(response, "Contacta a un administrador")
+        self.assertNotContains(response, "Próximamente")
+        self.assertNotContains(response, "Enviar invitaciones")
+        self.assign("docente")
+        self.assertContains(self.client.get(reverse("accounts:authorized")), "Enviar invitaciones")
+
+    def test_admin_rechaza_roles_incompatibles_y_permite_cambiar_o_corregir_el_rol(self):
+        self.assign("administrador")
+        self.login()
+        target = User.objects.create_user("otra@colegio.example", self.password)
+        student = Group.objects.get(name="estudiante")
+        teacher = Group.objects.get(name="docente")
+        target.groups.add(student)
+        url = reverse("admin:accounts_user_change", args=[target.pk])
+
+        response = self.client.post(url, {"is_active": "on", "groups": [student.pk, teacher.pk]})
+        self.assertContains(response, "Selecciona solo uno de los roles")
+        self.assertEqual(list(target.groups.all()), [student])
+        response = self.client.post(url, {"is_active": "on", "groups": [teacher.pk]})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(list(target.groups.all()), [teacher])
+
+        target.groups.add(student)
+        response = self.client.post(url, {"is_active": "on", "groups": [student.pk]})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(list(target.groups.all()), [student])
 
     def test_grupo_ajeno_no_habilita_acceso(self):
         self.user.groups.add(Group.objects.create(name="otro"))
@@ -190,3 +234,27 @@ class AccessTests(TestCase):
         )
         self.assertEqual(response.status_code, 403)
         self.assertIn("_auth_user_id", self.client.session)
+
+
+@override_settings(SECURE_SSL_REDIRECT=False)
+class RoleAssignmentConcurrencyTests(TransactionTestCase):
+    def test_dos_guardados_concurrentes_dejan_un_solo_rol_educativo(self):
+        administrator = User.objects.create_superuser("admin@colegio.example")
+        target = User.objects.create_user("persona@colegio.example")
+        roles = [Group.objects.get_or_create(name=name)[0] for name in ("estudiante", "docente")]
+        url = reverse("admin:accounts_user_change", args=[target.pk])
+        barrier = Barrier(2)
+
+        def assign_role(role):
+            try:
+                client = Client()
+                client.force_login(administrator)
+                barrier.wait(timeout=10)
+                return client.post(url, {"is_active": "on", "groups": [role.pk]}).status_code
+            finally:
+                connections.close_all()
+
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            self.assertEqual(list(executor.map(assign_role, roles)), [302, 302])
+        self.assertEqual(target.groups.count(), 1)
+        self.assertIn(target.groups.get(), roles)

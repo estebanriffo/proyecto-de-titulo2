@@ -136,11 +136,22 @@ class InvitationTests(TestCase):
 
     def test_retirar_rol_revoca_envio_con_sesion_abierta(self):
         self.assertEqual(self.client.get(self.url).status_code, 200)
-        self.teacher.groups.clear()
+        self.teacher.groups.set(Group.objects.filter(name="estudiante"))
+        self.assertNotContains(self.client.get(reverse("accounts:authorized")), "Enviar invitaciones")
         self.assertEqual(self.client.get(self.url).status_code, 403)
         self.assertEqual(
             self.client.post(self.url, {"email": "persona@colegio.example"}).status_code, 403
         )
+        self.assertFalse(Invitation.objects.exists())
+
+    def test_roles_educativos_incompatibles_no_permiten_invitar(self):
+        self.teacher.groups.add(Group.objects.get(name="estudiante"))
+        self.assertEqual(self.client.get(self.url).status_code, 403)
+        self.assertEqual(
+            self.client.post(self.url, {"email": "persona@colegio.example"}).status_code, 403
+        )
+        with self.assertRaises(PermissionDenied):
+            send_invitation(email="persona@colegio.example", invited_by=self.teacher)
         self.assertFalse(Invitation.objects.exists())
 
     def test_enlace_a_invitaciones_solo_aparece_para_roles_autorizados(self):

@@ -10,7 +10,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters, sensitive_variables
 from django.views.decorators.http import require_http_methods, require_safe
 
-from .access import can_invite, can_manage_accounts, get_landing_url, get_roles
+from .access import can_invite, can_manage_accounts, get_educational_roles, get_landing_url, get_roles
 from .adapters import PasswordResetDeliveryError
 from .forms import InvitationAcceptForm, InvitationForm
 from .services import (
@@ -37,13 +37,16 @@ def authorized(request):
     roles = get_roles(request.user)
     if not roles and not request.user.is_superuser:
         return redirect("accounts:pending")
+    educational_roles = get_educational_roles(roles)
     return render(
         request,
         "accounts/authorized.html",
         {
             "roles": roles,
-            "can_manage_accounts": can_manage_accounts(request.user),
-            "can_invite": can_invite(request.user),
+            "educational_role": next(iter(educational_roles)) if len(educational_roles) == 1 else None,
+            "has_role_conflict": len(educational_roles) > 1,
+            "can_manage_accounts": can_manage_accounts(request.user, roles),
+            "can_invite": can_invite(request.user, roles),
         },
     )
 

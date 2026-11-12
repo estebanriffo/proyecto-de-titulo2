@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Acceso habilitado · Aprendo a mi Ritmo{% endblock %}
+{% block title %}Inicio · Aprendo a mi Ritmo{% endblock %}
 
 {% block main %}
-    <h1>Tu acceso está habilitado</h1>
+    <h1>Inicio{% if educational_role %} de {{ educational_role }}{% endif %}</h1>
     <p>Has iniciado sesión como {{ user.email }}.</p>
     {% if roles %}
         <h2>Tus roles</h2>
@@ -11,10 +11,27 @@
             {% for role in roles %}<li>{{ role|capfirst }}</li>{% endfor %}
         </ul>
     {% endif %}
-    {% if can_invite %}
-        <p><a href="{% url 'accounts:invitations' %}">Enviar invitaciones</a></p>
+    {% if has_role_conflict %}
+        <p>Tu cuenta tiene asignados los roles de estudiante y docente. Contacta a un administrador para corregir tu acceso.</p>
     {% endif %}
-    {% if can_manage_accounts %}
-        <p><a href="{% url 'admin:accounts_user_changelist' %}">Gestionar cuentas y asignar roles</a></p>
+    {% if can_invite or can_manage_accounts %}
+        <nav aria-label="Funciones disponibles">
+            <ul>
+                {% if can_invite %}<li><a href="{% url 'accounts:invitations' %}">Enviar invitaciones</a></li>{% endif %}
+                {% if can_manage_accounts %}<li><a href="{% url 'admin:accounts_user_changelist' %}">Gestionar cuentas y asignar roles</a></li>{% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+    {% if educational_role %}
+        <h2>Próximamente</h2>
+        <ul>
+            {% if educational_role == "estudiante" %}
+                <li>Actividades</li>
+                <li>Mi progreso</li>
+            {% else %}
+                <li>Gestionar actividades</li>
+                <li>Revisar progreso de estudiantes</li>
+            {% endif %}
+        </ul>
     {% endif %}
 {% endblock %}
