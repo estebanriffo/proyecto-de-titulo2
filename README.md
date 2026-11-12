@@ -4,15 +4,15 @@
 
 El proyecto incluye el usuario personalizado con correo, la configuración mediante
 django-environ y la migración inicial con restricciones de unicidad y espacios.
-Los pasos 1 a 6 están verificados con las migraciones aplicadas en PostgreSQL local
-y 90 pruebas correctas. Incluyen allauth, acceso por correo, verificación de correo,
+Los pasos 1 a 7 están verificados con las migraciones aplicadas en PostgreSQL local.
+Incluyen allauth, acceso por correo, verificación de correo,
 cierre de sesión mediante POST, registro público cerrado, grupos, envío y reenvío
 de invitaciones y aceptación transaccional. El paso 7 incorpora la recuperación
 de contraseña con pantallas y correo en español, enlace basado en `SITE_URL`,
-respuesta pública genérica y manejo de errores de envío. Pasaron 13 pruebas sin
-base de datos y se renderizaron los cinco estados de sus plantillas. La suite
-ampliada contiene 104 pruebas y su ejecución con PostgreSQL sigue pendiente para
-verificar este incremento.
+respuesta pública genérica y manejo de errores de envío. Tras integrar la rama
+`spec-02-pagina-principal-por-rol`, pasaron las 108 pruebas con PostgreSQL el
+12 de noviembre de 2026. La integración incorpora el inicio por perfil y la
+validación de un solo rol educativo por cuenta. La SPEC 02 figura como borrador.
 
 ### Preparar el entorno en Windows
 
@@ -205,12 +205,12 @@ solo uso, correo y roles manipulados, login posterior, reversión del alta ante
 conflictos y aceptaciones concurrentes. La aceptación con CSRF activo se verifica
 con orígenes de localhost, 127.0.0.1 y HTTPS, además del rechazo de orígenes nulos
 y ajenos con token CSRF válido. También comprueban la ocultación del token
-en los mensajes de los registros de Django. Las 90 pruebas anteriores al paso 7
-pasaron con PostgreSQL. Las nuevas pruebas de recuperación verifican el cambio y
+en los mensajes de los registros de Django. Las pruebas de recuperación verifican el cambio y
 login posterior, roles, cuentas deshabilitadas, cuentas sin grupo, enlace usado o
-vencido, CSRF, límites de solicitudes, origen del enlace y fallos de envío. Su
-ejecución con PostgreSQL sigue pendiente porque se rechazó el permiso para ejecutar
-la suite. Para ejecutar las comprobaciones que usan exclusivamente memoria,
+vencido, CSRF, límites de solicitudes, origen del enlace y fallos de envío. También
+se prueban las funciones visibles por perfil, los roles educativos incompatibles
+y dos guardados concurrentes de roles desde la administración. La suite completa
+de 108 pruebas pasó con PostgreSQL. Para ejecutar las comprobaciones que usan exclusivamente memoria,
 puede usarse el siguiente comando.
 
 ```powershell
