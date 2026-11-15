@@ -10,6 +10,7 @@ htmlcov/
 .pytest_cache/
 staticfiles/
 media/
+godotactividades/
 *.log
 
 # Material académico y diagramas

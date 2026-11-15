@@ -1,0 +1,26 @@
+{% extends "activities/base.html" %}
+
+{% block title %}Subir actividad · Aprendo a mi Ritmo{% endblock %}
+{% block main %}
+    <a class="back-link" href="{% url 'activities:manage' %}">Volver a mis actividades</a>
+    <div class="page-heading"><h1>Subir actividad</h1><p>Prepara la portada, los archivos de Godot y los alumnos autorizados.</p></div>
+    <form class="activity-upload" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            <div class="form-field">
+                {% if field.name == "students" %}
+                    <fieldset><legend>{{ field.label }}</legend>
+                        {% if field.help_text %}<p id="{{ field.auto_id }}_helptext">{{ field.help_text }}</p>{% endif %}
+                        {{ field.errors }}{{ field }}
+                    </fieldset>
+                {% else %}
+                    {{ field.label_tag }}
+                    {{ field.errors }}{{ field }}
+                    {% if field.help_text %}<p class="helptext" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</p>{% endif %}
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit">Subir y previsualizar</button>
+    </form>
+{% endblock %}

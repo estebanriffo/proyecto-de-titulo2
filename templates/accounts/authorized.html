@@ -20,12 +20,17 @@
         </div>
     </div>
     <nav class="main-nav" aria-label="Navegación principal">
-        <a class="nav-current" href="{% url 'accounts:authorized' %}" aria-current="page">Inicio</a>
+        <a {% if request.resolver_match.view_name == 'accounts:authorized' %}class="nav-current" aria-current="page"{% endif %} href="{% url 'accounts:authorized' %}">Inicio</a>
         {% for function in home_functions %}
-            <button type="button" disabled>{{ function.title }}<span>Próximamente</span></button>
+            {% if function.url %}
+                <a href="{{ function.url }}" {% if request.path == function.url %}class="nav-current" aria-current="page"{% endif %}>{{ function.title }}</a>
+            {% else %}
+                <button type="button" disabled>{{ function.title }}<span>Próximamente</span></button>
+            {% endif %}
         {% endfor %}
         {% if can_invite %}<a href="{% url 'accounts:invitations' %}">Enviar invitaciones</a>{% endif %}
         {% if can_manage_accounts %}<a href="{% url 'admin:accounts_user_changelist' %}">Gestionar cuentas y asignar roles</a>{% endif %}
+        {% if can_manage_accounts and educational_role != "docente" %}<a href="{% url 'activities:manage' %}">Gestionar actividades</a>{% endif %}
         {% if educational_role %}
             <button type="button" disabled>Asistente de IA<span>Próximamente</span></button>
             <button type="button" disabled>Tutorial<span>Próximamente</span></button>
@@ -62,10 +67,10 @@
             <div class="function-grid">
                 {% for function in home_functions %}
                     <article class="function-card">
-                        <span class="availability">Próximamente</span>
+                        {% if not function.url %}<span class="availability">Próximamente</span>{% endif %}
                         <h3>{{ function.title }}</h3>
                         <p>{{ function.description }}</p>
-                        <button type="button" disabled>{{ function.action }}</button>
+                        {% if function.url %}<a class="action-link" href="{{ function.url }}">{{ function.action }}</a>{% else %}<button type="button" disabled>{{ function.action }}</button>{% endif %}
                     </article>
                 {% endfor %}
                 {% if can_invite %}

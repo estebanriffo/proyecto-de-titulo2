@@ -1,0 +1,10 @@
+{% extends "activities/base.html" %}
+
+{% block title %}Gestionar actividades · Aprendo a mi Ritmo{% endblock %}
+{% block main %}
+    <div class="page-heading heading-with-action">
+        <div><h1>Gestionar actividades</h1><p>Publica actividades de Godot y elige qué alumnos pueden abrirlas.</p></div>
+        <a class="action-link" href="{% url 'activities:upload' %}">Subir actividad</a>
+    </div>
+    {% include "activities/grid.html" %}
+{% endblock %}

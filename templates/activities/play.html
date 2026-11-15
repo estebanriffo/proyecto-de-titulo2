@@ -1,0 +1,21 @@
+{% extends "activities/base.html" %}
+
+{% block title %}{{ activity.title }} · Aprendo a mi Ritmo{% endblock %}
+{% block main %}
+    <a class="back-link" href="{% if educational_role == 'estudiante' %}{% url 'activities:list' %}{% else %}{% url 'activities:manage' %}{% endif %}">Volver a actividades</a>
+    <div class="page-heading"><h1>{{ activity.title }}</h1><p>{{ activity.description }}</p></div>
+    <iframe class="activity-player" title="{{ activity.title }}" src="{{ game_url }}" sandbox="allow-scripts allow-pointer-lock" allow="autoplay; fullscreen" allowfullscreen referrerpolicy="no-referrer"></iframe>
+    <p class="player-help">La actividad puede tardar unos segundos en cargar. Si ves una pantalla negra, pulsa dentro del recuadro para comenzar.</p>
+    {% if can_publish_activity and not activity.is_active %}
+        <section aria-labelledby="review-title">
+            <h2 id="review-title">Revisa antes de publicar</h2>
+            <p>Comprueba la actividad y confirma estos criterios para habilitarla a los alumnos seleccionados.</p>
+            <form class="activity-upload" method="post">
+                {% csrf_token %}
+                {{ review_form.non_field_errors }}
+                {% for field in review_form %}<div class="form-field">{{ field.errors }}{{ field }}{{ field.label_tag }}</div>{% endfor %}
+                <button type="submit">Publicar actividad</button>
+            </form>
+        </section>
+    {% endif %}
+{% endblock %}

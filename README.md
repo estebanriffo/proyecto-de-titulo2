@@ -1,5 +1,35 @@
 # Aprendo a mi Ritmo
 
+## Actividades de Godot de la SPEC 03
+
+Los alumnos acceden a **Actividades** desde el menú y ven un grid de las
+actividades publicadas que les hayan asignado, con portada, nombre y descripción.
+Los docentes y administradores acceden a **Gestionar actividades → Subir actividad**.
+
+Preparar en Godot una exportación **Web**, con renderizador Compatibility,
+un solo hilo y PWA desactivada. Comprimir todos los archivos exportados en un ZIP
+y subirlo junto con una portada PNG, JPEG o WebP. Completar el nombre, la
+descripción y los alumnos autorizados. La carga abre una previsualización.
+Después de comprobar la actividad, completar los tres criterios de revisión
+y pulsar **Publicar actividad** para habilitarla a esos alumnos.
+
+El ZIP admite hasta 150 MiB y 300 MiB descomprimidos, con hasta 300 archivos.
+La portada admite hasta 8 MiB. Los paquetes y portadas se almacenan en
+`godotactividades/<identificador>/` y se entregan por vistas autorizadas. Incluir ese directorio
+en el respaldo junto con PostgreSQL. El servicio debe tener permisos de escritura
+en `godotactividades/`. `GODOT_ACTIVITIES_ROOT` define esta ubicación en la configuración.
+La actividad se ejecuta aislada en un iframe mediante enlaces
+firmados con vigencia de dos horas. Recargar la página de ejecución renueva el enlace.
+
+Esta versión asigna permisos por alumno. El registro de resultados y la
+asignación por curso se desarrollarán en especificaciones posteriores.
+
+La prueba del reactor aportado detectó scripts compilados de Godot 4.5
+incompatibles con el motor Web 4.7.2 disponible. Una actividad técnica exportada
+con el Godot instalado sí se ejecutó e interactuó correctamente en el navegador.
+Las cargas y archivos de esas pruebas se eliminaron. Pasaron 119 pruebas de
+cuentas y actividades en PostgreSQL local el 15 de noviembre de 2026.
+
 ## Desarrollo de la SPEC 01
 
 El proyecto incluye el usuario personalizado con correo, la configuración mediante

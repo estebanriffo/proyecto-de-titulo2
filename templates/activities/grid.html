@@ -1,0 +1,20 @@
+{% if activities %}
+    <div class="activity-grid">
+        {% for activity in activities %}
+            <article class="activity-card">
+                <img src="{% url 'activities:cover' activity.pk %}" alt="" width="600" height="360" loading="lazy">
+                <div class="activity-card-body">
+                    {% if not activity.is_active %}<p class="availability">Pendiente de revisión</p>{% endif %}
+                    <h2>{{ activity.title }}</h2>
+                    <p>{{ activity.description }}</p>
+                    <a class="action-link" href="{% url 'activities:play' activity.pk %}">Abrir actividad<span class="visually-hidden"> {{ activity.title }}</span></a>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <section class="empty-activities">
+        <h2>{% if educational_role == "estudiante" %}Aún no tienes actividades asignadas{% else %}Todavía no hay actividades publicadas{% endif %}</h2>
+        <p>{% if educational_role == "estudiante" %}Cuando tu profesor te asigne una actividad, aparecerá aquí.{% else %}Sube una exportación Web de Godot para compartirla con tus alumnos.{% endif %}</p>
+    </section>
+{% endif %}

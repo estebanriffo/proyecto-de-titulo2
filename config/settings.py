@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "accounts.apps.AccountsConfig",
+    "activities.apps.ActivitiesConfig",
 ]
 
 MIDDLEWARE = [
@@ -65,6 +66,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "accounts.context_processors.email_delivery",
+                "accounts.context_processors.role_navigation",
             ]
         },
     }
@@ -111,6 +113,9 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_ROOT = BASE_DIR / "media"
+GODOT_ACTIVITIES_ROOT = BASE_DIR / "godotactividades"
+# Los paquetes se sirven mediante las vistas autorizadas de activities.
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_HTTPONLY = True

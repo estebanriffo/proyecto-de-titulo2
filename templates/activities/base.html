@@ -1,0 +1,7 @@
+{% extends "accounts/authorized.html" %}
+{% load static %}
+
+{% block page_styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'activities/activities.css' %}">
+{% endblock %}
