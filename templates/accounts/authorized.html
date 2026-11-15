@@ -1,37 +1,109 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Inicio · Aprendo a mi Ritmo{% endblock %}
+{% block body_class %}home-page{% endblock %}
+{% block page_styles %}<link rel="stylesheet" href="{% static 'accounts/home.css' %}">{% endblock %}
+
+{% block header %}
+    <div class="header-bar">
+        <a class="brand" href="{% url 'home' %}" aria-label="Aprendo a mi Ritmo, inicio">
+            <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span>Aprendo<br><span class="brand-secondary">a mi Ritmo</span></span>
+        </a>
+        <div class="session-controls">
+            <span class="role-label">{% for role in roles %}{{ role|capfirst }}{% if not forloop.last %}, {% endif %}{% empty %}Administración{% endfor %}</span>
+            <form method="post" action="{% url 'account_logout' %}">
+                {% csrf_token %}
+                <button class="logout" type="submit">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+    <nav class="main-nav" aria-label="Navegación principal">
+        <a class="nav-current" href="{% url 'accounts:authorized' %}" aria-current="page">Inicio</a>
+        {% for function in home_functions %}
+            <button type="button" disabled>{{ function.title }}<span>Próximamente</span></button>
+        {% endfor %}
+        {% if can_invite %}<a href="{% url 'accounts:invitations' %}">Enviar invitaciones</a>{% endif %}
+        {% if can_manage_accounts %}<a href="{% url 'admin:accounts_user_changelist' %}">Gestionar cuentas y asignar roles</a>{% endif %}
+        {% if educational_role %}
+            <button type="button" disabled>Asistente de IA<span>Próximamente</span></button>
+            <button type="button" disabled>Tutorial<span>Próximamente</span></button>
+            <button type="button" disabled>Accesibilidad<span>Próximamente</span></button>
+            <button type="button" disabled>Soporte<span>Próximamente</span></button>
+        {% endif %}
+    </nav>
+{% endblock %}
 
 {% block main %}
-    <h1>Inicio{% if educational_role %} de {{ educational_role }}{% endif %}</h1>
-    <p>Has iniciado sesión como {{ user.email }}.</p>
-    {% if roles %}
-        <h2>Tus roles</h2>
-        <ul>
-            {% for role in roles %}<li>{{ role|capfirst }}</li>{% endfor %}
-        </ul>
-    {% endif %}
+    <section class="welcome" aria-labelledby="welcome-title">
+        <div class="welcome-copy">
+            <h1 id="welcome-title">{% if has_role_conflict %}Tu acceso necesita revisión.{% elif educational_role == "estudiante" %}Tu espacio para aprender a tu ritmo.{% elif educational_role == "docente" %}Un espacio para acompañar el aprendizaje.{% else %}Tu espacio de administración.{% endif %}</h1>
+            <p>{% if has_role_conflict %}Un administrador debe revisar los roles asignados a tu cuenta.{% elif educational_role == "estudiante" %}Aquí encontrarás tus actividades y podrás seguir lo que vas aprendiendo.{% elif educational_role == "docente" %}Reúne tus actividades y acompaña los avances de tus estudiantes desde un mismo lugar.{% else %}Gestiona las cuentas y los accesos de la comunidad educativa.{% endif %}</p>
+        </div>
+        <div class="account-summary">
+            <span class="account-heading">Tu cuenta</span>
+            <p class="account-email">{{ user.email }}</p>
+            <p>{% for role in roles %}{{ role|capfirst }}{% if not forloop.last %}, {% endif %}{% empty %}Administración{% endfor %}</p>
+            <span class="account-status">Sesión iniciada</span>
+        </div>
+    </section>
+
     {% if has_role_conflict %}
-        <p>Tu cuenta tiene asignados los roles de estudiante y docente. Contacta a un administrador para corregir tu acceso.</p>
+        <section class="role-conflict" aria-labelledby="conflict-title">
+            <h2 id="conflict-title">Revisa tu acceso</h2>
+            <p>Tu cuenta tiene asignados los roles de estudiante y docente. Contacta a un administrador para corregir tu acceso.</p>
+        </section>
     {% endif %}
-    {% if can_invite or can_manage_accounts %}
-        <nav aria-label="Funciones disponibles">
-            <ul>
-                {% if can_invite %}<li><a href="{% url 'accounts:invitations' %}">Enviar invitaciones</a></li>{% endif %}
-                {% if can_manage_accounts %}<li><a href="{% url 'admin:accounts_user_changelist' %}">Gestionar cuentas y asignar roles</a></li>{% endif %}
-            </ul>
-        </nav>
+
+    {% if home_functions or can_invite or can_manage_accounts %}
+        <section class="workspace" aria-labelledby="workspace-title">
+            <h2 id="workspace-title">{% if educational_role == "estudiante" %}Tu aprendizaje{% elif educational_role == "docente" %}Tus herramientas de trabajo{% else %}Gestión de la plataforma{% endif %}</h2>
+            <div class="function-grid">
+                {% for function in home_functions %}
+                    <article class="function-card">
+                        <span class="availability">Próximamente</span>
+                        <h3>{{ function.title }}</h3>
+                        <p>{{ function.description }}</p>
+                        <button type="button" disabled>{{ function.action }}</button>
+                    </article>
+                {% endfor %}
+                {% if can_invite %}
+                    <article class="function-card function-card-active">
+                        <h3>Invitaciones</h3>
+                        <p>Invita a una persona a crear su cuenta en Aprendo a mi Ritmo.</p>
+                        <a class="action-link" href="{% url 'accounts:invitations' %}">Enviar invitaciones</a>
+                    </article>
+                {% endif %}
+                {% if can_manage_accounts %}
+                    <article class="function-card function-card-active">
+                        <h3>Cuentas y permisos</h3>
+                        <p>Asigna roles y administra el acceso de las cuentas de la plataforma.</p>
+                        <a class="action-link" href="{% url 'admin:accounts_user_changelist' %}">Gestionar cuentas y asignar roles</a>
+                    </article>
+                {% endif %}
+            </div>
+        </section>
     {% endif %}
     {% if educational_role %}
-        <h2>Próximamente</h2>
-        <ul>
-            {% if educational_role == "estudiante" %}
-                <li>Actividades</li>
-                <li>Mi progreso</li>
-            {% else %}
-                <li>Gestionar actividades</li>
-                <li>Revisar progreso de estudiantes</li>
-            {% endif %}
-        </ul>
+        <aside class="orientation" aria-labelledby="orientation-title">
+            <div>
+                <h2 id="orientation-title">Conoce tu espacio</h2>
+                <p>El tutorial y el asistente de IA estarán aquí para orientarte. Las opciones marcadas «Próximamente» se habilitarán cuando estén disponibles.</p>
+            </div>
+            <button type="button" disabled>Ver tutorial <span>Próximamente</span></button>
+        </aside>
     {% endif %}
+{% endblock %}
+
+{% block footer %}
+    <footer class="site-footer">
+        <div><span class="footer-brand">Aprendo a mi Ritmo</span><p>Un espacio de apoyo al aprendizaje.</p></div>
+        {% if educational_role %}
+            <nav aria-label="Ayuda y preferencias">
+                <button type="button" disabled>Accesibilidad <span>Próximamente</span></button>
+                <button type="button" disabled>Soporte <span>Próximamente</span></button>
+            </nav>
+        {% endif %}
+    </footer>
 {% endblock %}

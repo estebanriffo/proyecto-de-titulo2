@@ -27,10 +27,12 @@
         .messages { padding-left: 1.5rem; }
         @media (max-width: 45rem) { main { margin-inline: .75rem; } }
     </style>
+    {% block page_styles %}{% endblock %}
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
     <a class="skip-link" href="#contenido">Ir al contenido</a>
     <header>
+        {% block header %}
         <a href="{% url 'home' %}">Aprendo a mi Ritmo</a>
         {% if user.is_authenticated %}
             <form method="post" action="{% url 'account_logout' %}">
@@ -38,6 +40,7 @@
                 <button type="submit">Cerrar sesión</button>
             </form>
         {% endif %}
+        {% endblock %}
     </header>
     <main id="contenido" tabindex="-1">
         {% if messages %}
@@ -47,6 +50,7 @@
         {% endif %}
         {% block main %}{% endblock %}
     </main>
+    {% block footer %}{% endblock %}
     {% block extra_body %}{% endblock %}
 </body>
 </html>

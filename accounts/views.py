@@ -38,12 +38,40 @@ def authorized(request):
     if not roles and not request.user.is_superuser:
         return redirect("accounts:pending")
     educational_roles = get_educational_roles(roles)
+    educational_role = next(iter(educational_roles)) if len(educational_roles) == 1 else None
+    home_functions = {
+        "estudiante": [
+            {
+                "title": "Actividades",
+                "description": "Encuentra tus actividades y practica paso a paso.",
+                "action": "Ver actividades",
+            },
+            {
+                "title": "Mi progreso",
+                "description": "Revisa tus avances y las actividades que hayas realizado.",
+                "action": "Ver mi progreso",
+            },
+        ],
+        "docente": [
+            {
+                "title": "Gestionar actividades",
+                "description": "Prepara y organiza las actividades para tus estudiantes.",
+                "action": "Gestionar actividades",
+            },
+            {
+                "title": "Revisar progreso de estudiantes",
+                "description": "Consulta los avances de tus estudiantes para acompañar su aprendizaje.",
+                "action": "Revisar progreso",
+            },
+        ],
+    }
     return render(
         request,
         "accounts/authorized.html",
         {
             "roles": roles,
-            "educational_role": next(iter(educational_roles)) if len(educational_roles) == 1 else None,
+            "educational_role": educational_role,
+            "home_functions": home_functions.get(educational_role, []),
             "has_role_conflict": len(educational_roles) > 1,
             "can_manage_accounts": can_manage_accounts(request.user, roles),
             "can_invite": can_invite(request.user, roles),

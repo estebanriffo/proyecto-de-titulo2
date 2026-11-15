@@ -61,8 +61,8 @@ class AccessTests(TestCase):
 
     def test_cada_rol_accede_a_la_pantalla_autorizada(self):
         options = {
-            "estudiante": ("<li>Actividades</li>", "<li>Mi progreso</li>"),
-            "docente": ("<li>Gestionar actividades</li>", "<li>Revisar progreso de estudiantes</li>"),
+            "estudiante": ("<h3>Actividades</h3>", "<h3>Mi progreso</h3>"),
+            "docente": ("<h3>Gestionar actividades</h3>", "<h3>Revisar progreso de estudiantes</h3>"),
         }
         for role in ROLE_NAMES:
             with self.subTest(role=role):
