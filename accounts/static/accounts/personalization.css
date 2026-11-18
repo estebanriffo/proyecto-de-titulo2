@@ -1,0 +1,256 @@
+@font-face {
+    font-family: "OpenDyslexic";
+    src: url("fonts/OpenDyslexic-Regular.woff") format("woff");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: "OpenDyslexic";
+    src: url("fonts/OpenDyslexic-Bold.woff") format("woff");
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+}
+
+html[data-personalized],
+html[data-personalized] body,
+html[data-personalized] button,
+html[data-personalized] input,
+html[data-personalized] textarea,
+html[data-personalized] select {
+    font-family: var(--reading-font);
+}
+html[data-personalized] main,
+html[data-personalized] body > header,
+html[data-personalized] body > footer {
+    overflow-wrap: anywhere;
+}
+html[data-personalized] button,
+html[data-personalized] .action-link {
+    min-height: max(44px, 2.75rem);
+}
+html[data-personalized] body {
+    background: var(--personal-body);
+    color: var(--personal-body-text);
+}
+html[data-personalized] body > header {
+    background: var(--personal-header);
+    color: var(--personal-header-text);
+}
+html[data-personalized] body > header a,
+html[data-personalized] body > header .role-label,
+html[data-personalized] body > header button {
+    color: var(--personal-header-text);
+    background-color: transparent;
+}
+html[data-personalized] body > header .nav-current {
+    border-bottom-color: currentColor;
+}
+html[data-personalized] body > header a:hover,
+html[data-personalized] body > header button:hover {
+    text-decoration: underline;
+}
+html[data-personalized] main {
+    color: var(--personal-body-text);
+    background-color: var(--personal-body);
+}
+html[data-personalized] main > .page-heading p,
+html[data-personalized] .orientation p,
+html[data-personalized] .player-help,
+html[data-personalized] .back-link {
+    color: var(--personal-body-text);
+}
+html[data-personalized] main a:not(.action-link) {
+    color: inherit;
+}
+html[data-personalized] main form:not(.activity-upload) .helptext {
+    color: inherit;
+}
+html[data-personalized] .orientation button:disabled {
+    color: var(--personal-body-text);
+}
+html[data-personalized] .function-card,
+html[data-personalized] .activity-card,
+html[data-personalized] .activity-upload,
+html[data-personalized] .empty-activities,
+html[data-personalized] .role-conflict {
+    color: #17334c;
+}
+html[data-personalized] body > footer {
+    background: var(--personal-footer);
+    color: var(--personal-footer-text);
+}
+html[data-personalized] body > footer p,
+html[data-personalized] body > footer .footer-brand,
+html[data-personalized] body > footer button,
+html[data-personalized] body > footer a {
+    color: var(--personal-footer-text);
+    background-color: transparent;
+}
+html[data-personalized] main input,
+html[data-personalized] main textarea,
+html[data-personalized] main select {
+    background-color: white;
+    color: #17334c;
+}
+html[data-personalized] .settings-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    border: 1px solid currentColor;
+    border-radius: .4rem;
+    background: transparent;
+    color: inherit;
+    padding: .6rem .8rem;
+    font-size: .9rem;
+    max-width: 100%;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+}
+.settings-toggle[hidden] { display: none; }
+.settings-toggle > span { font-size: 1.25rem; }
+.session-controls { flex-wrap: wrap; }
+.site-footer nav {
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+.settings-panel {
+    position: fixed;
+    inset: 0 0 0 auto;
+    width: min(100%, 30rem);
+    max-width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: clamp(12px, 2vw, 24px);
+    border: 0;
+    border-left: 3px solid #22635e;
+    border-radius: 0;
+    background: #ffffff;
+    color: #17334c;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    overflow-wrap: anywhere;
+}
+.settings-panel::backdrop { background: rgb(17 34 54 / 55%); }
+.settings-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.settings-heading h2 {
+    min-width: 0;
+    margin: 0;
+    font-size: clamp(1.15rem, 5vw, 1.5rem);
+    overflow-wrap: anywhere;
+}
+body:has(.settings-panel[open]) { overflow: hidden; }
+.settings-panel .settings-close {
+    flex-shrink: 0;
+    width: clamp(44px, 2.75rem, 64px);
+    min-height: clamp(44px, 2.75rem, 64px);
+    font-size: clamp(24px, 1.6rem, 40px);
+    padding: .25rem;
+    line-height: 1;
+    background: #eef4f8;
+    color: #17334c;
+}
+.settings-intro { margin: .75rem 0 1.5rem; }
+.settings-panel fieldset {
+    margin: 0 0 1.5rem;
+    padding: clamp(8px, 2vw, 16px);
+    border: 1px solid #b4c3d2;
+    border-radius: .5rem;
+    min-width: 0;
+}
+.settings-panel legend { font-weight: 700; padding-inline: .35rem; }
+.settings-panel label { margin-top: .75rem; }
+.settings-panel select {
+    display: block;
+    width: 100%;
+    min-height: max(44px, 2.75rem);
+    margin-top: .4rem;
+    border: 1px solid #667d93;
+    border-radius: .3rem;
+    padding: .5rem;
+    font: inherit;
+    color: #17334c;
+    background: white;
+}
+.settings-panel input[type="range"] {
+    min-height: max(44px, 2.75rem);
+    padding-inline: 0;
+    accent-color: #22635e;
+}
+.settings-panel output { font-weight: 400; white-space: nowrap; }
+.settings-help { color: #425b73; font-size: .85rem; margin: .5rem 0 0; }
+.color-choice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+.color-choice label { margin: 0; }
+.settings-panel input[type="color"] {
+    flex-shrink: 0;
+    width: clamp(44px, 3.5rem, 84px);
+    max-width: 100%;
+    height: clamp(44px, 2.75rem, 64px);
+    padding: .15rem;
+    cursor: pointer;
+}
+.settings-reset { width: 100%; background: #22635e; }
+.settings-panel button { overflow-wrap: anywhere; }
+html[data-personalized] .speech-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: max(44px, 2.75rem);
+    min-height: max(44px, 2.75rem);
+    padding: .25rem;
+    margin: .15rem 0 .15rem .4rem;
+    border: 1px solid currentColor;
+    border-radius: .4rem;
+    background: transparent;
+    color: inherit;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1;
+    vertical-align: middle;
+    flex-shrink: 0;
+    letter-spacing: normal;
+}
+.speech-button[aria-pressed="true"] { outline: 3px solid currentColor; }
+.speech-button:disabled { cursor: not-allowed; }
+main label.speech-label { display: inline; }
+.speech-feedback {
+    position: fixed;
+    z-index: 10;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100% - 2rem);
+    margin: 0;
+    padding: .75rem 1rem;
+    border: 1px solid #22635e;
+    border-radius: .4rem;
+    background: white;
+    color: #17334c;
+    font-size: .9rem;
+    pointer-events: none;
+}
+.speech-feedback:empty { display: none; }
+html[data-personalized] :focus-visible { outline-color: currentColor; }
+@media (max-width: 36rem) {
+    .home-page .header-bar { flex-direction: column; }
+    .home-page .session-controls { flex-direction: row; align-items: center; width: 100%; }
+    .settings-panel { padding: 12px; }
+    .home-page .main-nav > a,
+    .home-page .main-nav > button { overflow-wrap: anywhere; }
+}

@@ -12,7 +12,8 @@
             <span>Aprendo<br><span class="brand-secondary">a mi Ritmo</span></span>
         </a>
         <div class="session-controls">
-            <span class="role-label">{% for role in roles %}{{ role|capfirst }}{% if not forloop.last %}, {% endif %}{% empty %}Administración{% endfor %}</span>
+            {% include "accounts/settings_button.html" %}
+            <span class="role-label" data-no-speech>{% for role in roles %}{{ role|capfirst }}{% if not forloop.last %}, {% endif %}{% empty %}Administración{% endfor %}</span>
             <form method="post" action="{% url 'account_logout' %}">
                 {% csrf_token %}
                 <button class="logout" type="submit">Cerrar sesión</button>
@@ -34,7 +35,7 @@
         {% if educational_role %}
             <button type="button" disabled>Asistente de IA<span>Próximamente</span></button>
             <button type="button" disabled>Tutorial<span>Próximamente</span></button>
-            <button type="button" disabled>Accesibilidad<span>Próximamente</span></button>
+            <button type="button" data-open-settings>Accesibilidad</button>
             <button type="button" disabled>Soporte<span>Próximamente</span></button>
         {% endif %}
     </nav>
@@ -46,7 +47,7 @@
             <h1 id="welcome-title">{% if has_role_conflict %}Tu acceso necesita revisión.{% elif educational_role == "estudiante" %}Tu espacio para aprender a tu ritmo.{% elif educational_role == "docente" %}Un espacio para acompañar el aprendizaje.{% else %}Tu espacio de administración.{% endif %}</h1>
             <p>{% if has_role_conflict %}Un administrador debe revisar los roles asignados a tu cuenta.{% elif educational_role == "estudiante" %}Aquí encontrarás tus actividades y podrás seguir lo que vas aprendiendo.{% elif educational_role == "docente" %}Reúne tus actividades y acompaña los avances de tus estudiantes desde un mismo lugar.{% else %}Gestiona las cuentas y los accesos de la comunidad educativa.{% endif %}</p>
         </div>
-        <div class="account-summary">
+        <div class="account-summary" data-no-speech>
             <span class="account-heading">Tu cuenta</span>
             <p class="account-email">{{ user.email }}</p>
             <p>{% for role in roles %}{{ role|capfirst }}{% if not forloop.last %}, {% endif %}{% empty %}Administración{% endfor %}</p>
@@ -106,7 +107,7 @@
         <div><span class="footer-brand">Aprendo a mi Ritmo</span><p>Un espacio de apoyo al aprendizaje.</p></div>
         {% if educational_role %}
             <nav aria-label="Ayuda y preferencias">
-                <button type="button" disabled>Accesibilidad <span>Próximamente</span></button>
+                <button type="button" data-open-settings>Accesibilidad</button>
                 <button type="button" disabled>Soporte <span>Próximamente</span></button>
             </nav>
         {% endif %}

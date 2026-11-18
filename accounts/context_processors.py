@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.utils.crypto import salted_hmac
 from django.urls import reverse
 
 from .access import can_invite, can_manage_accounts, get_educational_roles, get_roles
@@ -8,6 +9,13 @@ def email_delivery(request):
     return {
         "email_to_console": settings.DEBUG
         and settings.EMAIL_BACKEND == "django.core.mail.backends.console.EmailBackend",
+    }
+
+
+def personalization(request):
+    identity = f"{request.user.pk}:{request.session.session_key or 'visitor'}"
+    return {
+        "personalization_scope": salted_hmac("aamr.personalization", identity).hexdigest()[:24]
     }
 
 

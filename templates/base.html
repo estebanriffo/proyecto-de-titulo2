@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="es-CL">
 <head>
@@ -28,12 +29,15 @@
         @media (max-width: 45rem) { main { margin-inline: .75rem; } }
     </style>
     {% block page_styles %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'accounts/personalization.css' %}?v=2">
+    <script src="{% static 'accounts/personalization.js' %}?v=2" defer></script>
 </head>
 <body class="{% block body_class %}{% endblock %}">
     <a class="skip-link" href="#contenido">Ir al contenido</a>
     <header>
         {% block header %}
         <a href="{% url 'home' %}">Aprendo a mi Ritmo</a>
+        {% include "accounts/settings_button.html" %}
         {% if user.is_authenticated %}
             <form method="post" action="{% url 'account_logout' %}">
                 {% csrf_token %}
@@ -51,6 +55,7 @@
         {% block main %}{% endblock %}
     </main>
     {% block footer %}{% endblock %}
+    {% include "accounts/settings_panel.html" %}
     {% block extra_body %}{% endblock %}
 </body>
 </html>

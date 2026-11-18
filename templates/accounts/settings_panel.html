@@ -1,0 +1,49 @@
+<dialog id="settings-panel" class="settings-panel" aria-labelledby="settings-title" data-preferences-scope="{{ personalization_scope }}" data-no-speech>
+    <div class="settings-heading">
+        <h2 id="settings-title">Configuración</h2>
+        <button type="button" class="settings-close" aria-label="Cerrar configuración" data-close-settings>×</button>
+    </div>
+    <p class="settings-intro">Adapta este espacio a tu forma de leer y aprender.</p>
+    <form id="preferences-form">
+        <fieldset>
+            <legend>Lectura</legend>
+            <label for="reading-font">Fuente de texto</label>
+            <select id="reading-font" name="font">
+                <option value="default">Fuente de la página</option>
+                <option value="arial">Arial</option>
+                <option value="verdana">Verdana</option>
+                <option value="opendyslexic">OpenDyslexic</option>
+            </select>
+            <p class="settings-help">OpenDyslexic ofrece letras de formas diferenciadas. Elige la fuente que te resulte más cómoda.</p>
+            <label for="text-size">Tamaño del texto <output for="text-size" id="text-size-value">100 %</output></label>
+            <input id="text-size" name="textSize" type="range" min="50" max="300" step="5" value="100">
+        </fieldset>
+        <fieldset>
+            <legend>Colores</legend>
+            <label for="color-palette">Paleta</label>
+            <select id="color-palette" name="palette">
+                <option value="original">Original</option>
+                <option value="ocean">Azul sereno</option>
+                <option value="garden">Verde suave</option>
+                <option value="sand">Arena</option>
+                <option value="night">Oscura</option>
+                <option value="custom">Personalizada</option>
+            </select>
+            <div class="color-choice"><label for="header-color">Encabezado</label><input id="header-color" name="headerColor" type="color" value="#ffffff"></div>
+            <div class="color-choice"><label for="body-color">Cuerpo de la página</label><input id="body-color" name="bodyColor" type="color" value="#eef4f8"></div>
+            <div class="color-choice"><label for="footer-color">Pie de página</label><input id="footer-color" name="footerColor" type="color" value="#ffffff"></div>
+            <p class="settings-help">El texto se ajusta automáticamente para mantener contraste con los colores elegidos.</p>
+        </fieldset>
+        <fieldset>
+            <legend>Sonido</legend>
+            <label for="voice-volume">Volumen de lectura <output for="voice-volume" id="voice-volume-value">80 %</output></label>
+            <input id="voice-volume" name="voiceVolume" type="range" min="0" max="100" step="5" value="80">
+            <label for="activity-volume">Volumen de actividades y multimedia <output for="activity-volume" id="activity-volume-value">80 %</output></label>
+            <input id="activity-volume" name="activityVolume" type="range" min="0" max="100" step="5" value="80">
+            <p class="settings-help">En cero, el sonido queda silenciado.</p>
+        </fieldset>
+        <button type="button" class="settings-reset" id="reset-preferences">Restablecer valores</button>
+        <p class="settings-help" id="preferences-status" role="status">Los cambios se guardan durante esta sesión del navegador.</p>
+    </form>
+</dialog>
+<p id="speech-feedback" class="speech-feedback" role="status" aria-live="polite" data-no-speech></p>

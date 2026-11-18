@@ -1,5 +1,26 @@
 # Aprendo a mi Ritmo
 
+## Personalización de la SPEC 05
+
+El botón **Configuración** del encabezado y los accesos **Accesibilidad** abren
+un panel con fuentes, tamaño de texto de 50 a 300 %, paletas y colores para encabezado, cuerpo
+y pie de página. Incluye OpenDyslexic como fuente local y una opción para
+restablecer los valores. Las preferencias se conservan en la misma pestaña al
+navegar y recargar durante la sesión.
+
+Las bocinas de los bloques de texto permiten iniciar y detener la lectura con
+las voces disponibles en el navegador, priorizando español. Los datos de cuenta,
+correo, roles, sesión y etiquetas «Próximamente» quedan excluidos de las bocinas.
+El panel separa
+el volumen de lectura del volumen de actividades y multimedia. El audio de
+Godot se regula mediante un puente aislado que recibe el volumen de la página.
+La lectura abarca el texto HTML. Los textos dibujados dentro del Canvas de una
+actividad requieren soporte de esa actividad.
+
+Las fuentes incluidas conservan su atribución y licencia en
+`accounts/static/accounts/fonts/LICENSE-OpenDyslexic.txt`. Pasaron 120 pruebas
+de cuentas y actividades en PostgreSQL local el 18 de noviembre de 2026.
+
 ## Actividades de Godot de la SPEC 03
 
 Los alumnos acceden a **Actividades** desde el menú y ven un grid de las

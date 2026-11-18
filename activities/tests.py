@@ -165,11 +165,25 @@ class ActivityTests(TestCase):
         self.assertEqual(response["Access-Control-Allow-Origin"], "*")
         self.assertIn("sandbox allow-scripts", response["Content-Security-Policy"])
         self.assertEqual(response["X-Frame-Options"], "SAMEORIGIN")
-        self.assertIn(b"GODOT_CONFIG", b"".join(response.streaming_content))
+        self.assertIn(b"GODOT_CONFIG", response.content)
         traversal = reverse("activities:asset", kwargs={"token": token, "filename": "../cover.png"})
         self.assertEqual(self.client.get(traversal).status_code, 404)
         self.activity.students.clear()
         self.assertEqual(self.client.get(url).status_code, 404)
+
+    def test_puente_de_audio_autorizado_y_aislado(self):
+        token = signing.dumps({"activity": str(self.activity.pk), "user": self.student.pk}, salt=TOKEN_SALT)
+        html_url = reverse("activities:asset", kwargs={"token": token, "filename": self.activity.entrypoint})
+        bridge_url = reverse("activities:asset", kwargs={"token": token, "filename": "__aamr_audio_bridge.js"})
+        # El HTML de esta prueba usa una cabecera completa como las exportaciones reales.
+        package_path = Path(self.temporary.name, "activities", str(self.activity.pk), "package", self.activity.entrypoint)
+        package_path.write_text("<html><head></head><body>Prueba</body></html>", encoding="utf-8")
+        self.assertContains(self.client.get(html_url), "__aamr_audio_bridge.js")
+        response = self.client.get(bridge_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"aamr:set-volume", b"".join(response.streaming_content))
+        self.activity.students.clear()
+        self.assertEqual(self.client.get(bridge_url).status_code, 404)
 
     def test_token_caducado_y_cuenta_desactivada(self):
         with patch("django.core.signing.time.time", return_value=1):

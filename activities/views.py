@@ -1,4 +1,6 @@
 import mimetypes
+import re
+from html import escape
 from pathlib import Path, PurePosixPath
 from zipfile import BadZipFile
 
@@ -9,7 +11,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core import signing
 from django.core.exceptions import PermissionDenied, ValidationError
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.cache import never_cache
@@ -21,6 +23,7 @@ from .models import Activity
 from .packages import ALLOWED_EXTENSIONS, publish_activity
 
 TOKEN_SALT = "activities.web-package"
+AUDIO_BRIDGE_NAME = "__aamr_audio_bridge.js"
 
 
 @never_cache
@@ -120,9 +123,21 @@ def asset(request, token, filename):
         or (path.suffix.lower() == ".html" and PurePosixPath(filename) != PurePosixPath(activity.entrypoint))
     ):
         raise Http404
+    bridge_url = reverse("activities:asset", kwargs={"token": token, "filename": AUDIO_BRIDGE_NAME})
     try:
-        content_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
-        response = FileResponse(path.open("rb"), content_type=content_type)
+        if filename == AUDIO_BRIDGE_NAME:
+            bridge_path = Path(__file__).resolve().parent / "static" / "activities" / "audio-bridge.js"
+            response = FileResponse(bridge_path.open("rb"), content_type="text/javascript")
+        elif path.suffix.lower() == ".html":
+            html = path.read_text(encoding="utf-8-sig")
+            script = f'<script src="{escape(bridge_url, quote=True)}"></script>'
+            html, count = re.subn(r"(<head\b[^>]*>)", lambda match: match[0] + script, html, count=1, flags=re.IGNORECASE)
+            if not count:
+                html = script + html
+            response = HttpResponse(html, content_type="text/html; charset=utf-8")
+        else:
+            content_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+            response = FileResponse(path.open("rb"), content_type=content_type)
     except (OSError, ValueError):
         raise Http404 from None
     package_url = request.build_absolute_uri(reverse("activities:asset", kwargs={"token": token, "filename": activity.entrypoint}))
@@ -133,7 +148,7 @@ def asset(request, token, filename):
     response["X-Frame-Options"] = "SAMEORIGIN"
     response["Content-Security-Policy"] = (
         "sandbox allow-scripts allow-pointer-lock; default-src 'none'; "
-        f"script-src {package_source} 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval'; "
+        f"script-src {package_source} {request.build_absolute_uri(bridge_url)} 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval'; "
         f"connect-src {package_source}; img-src {package_source} data: blob:; "
         "style-src 'unsafe-inline'; worker-src blob:; media-src blob:; "
         "base-uri 'none'; form-action 'none'; frame-ancestors 'self'"

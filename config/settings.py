@@ -67,6 +67,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "accounts.context_processors.email_delivery",
                 "accounts.context_processors.role_navigation",
+                "accounts.context_processors.personalization",
             ]
         },
     }
